@@ -36,7 +36,6 @@ To use Byte Fortress, follow these steps:
 
   Example using curl:
 
-    ```bash
     curl -X POST \
     -H "x-full-file-path: /path/to/file.txt" \
     -H "Content-Type: application/octet-stream" \
@@ -50,7 +49,6 @@ To use Byte Fortress, follow these steps:
 
   Example using curl:
 
-    ```bash
     curl -X GET \
       -H "x-full-file-path: /path/to/file.txt" \
       http://localhost:8080/file
@@ -61,7 +59,6 @@ To update a file, send a POST request to the `/file` endpoint with the updated f
 
   Example using `curl`:
   
-    ```bash
     curl -X POST \
       -H "x-full-file-path: /path/to/file.txt" \
       -H "Content-Type: application/octet-stream" \
