@@ -8,7 +8,16 @@ Byte Fortress is a Rust-based file storage and management system that utilizes R
 - **RESTful API:** Provides a RESTful API for uploading, downloading, updating, and deleting files.
 - **Easy Deployment:** All dependencies are packaged within a single binary for easy deployment and use.
 
-## Installation
+## Directly Download prebuilt binary and use it
+
+   - WINDOWS : https://github.com/Sanket3dx/byte_fortress/raw/master/byte_fortress.exe
+   - LINUX : https://raw.githubusercontent.com/Sanket3dx/byte_fortress/master/byte_fortress
+
+   download and run directly 
+
+OR 
+
+## How To Build And Run
 
 To use Byte Fortress, follow these steps:
 
