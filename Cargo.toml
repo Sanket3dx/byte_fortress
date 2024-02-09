@@ -1,0 +1,17 @@
+[package]
+name = "byte_fortress"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4"
+bson = "1.2"
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4"
+rocksdb = "0.21.0"
+serde_json = "1.0"
+serde_urlencoded = "0.7"
+console = "0.12.0"
+indicatif = "0.17.0"
