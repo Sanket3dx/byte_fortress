@@ -71,9 +71,9 @@ pub async fn handle_file_post(req: HttpRequest, file_data: web::Bytes) -> HttpRe
     // Validate file size
     let binary_data = file_data.to_vec();
     let size = binary_data.len() as u64;
-    if size > 10_000_000 {
-        return HttpResponse::BadRequest().body("File size exceeds the limit");
-    }
+    // if size > 10_000_000 {
+    //     return HttpResponse::BadRequest().body("File size exceeds the limit");
+    // }
 
     // Create FileSchema object
     let file = FileSchema {
