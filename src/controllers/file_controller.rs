@@ -138,3 +138,291 @@ pub async fn handle_file_delete(req: HttpRequest) -> HttpResponse {
         }
     }
 }
+
+pub async fn index() -> HttpResponse {
+    let html_content = r#"
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Byte Fortress</title>
+        <!-- Bootstrap CSS -->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+        />
+        <style>
+          body {
+            padding-top: 50px;
+            background-color: #f0f0f0;
+            color: #333;
+          }
+    
+          .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          }
+    
+          h1 {
+            margin-top: 0;
+            color: #333;
+          }
+    
+          .form-group {
+            margin-bottom: 20px;
+          }
+          form {
+            margin-top: 20px;
+          }
+    
+          input[type="text"],
+          input[type="file"],
+          button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+          }
+    
+          .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+          }
+    
+          .message.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+          }
+    
+          .message.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+          }
+    
+          .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+            display: none;
+          }
+    
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1 class="mb-4">Byte Fortress</h1>
+    
+          <form id="uploadForm" enctype="multipart/form-data">
+            <div class="form-group">
+              <input
+                type="file"
+                id="uploadFile"
+                name="file"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="uploadFilePath"
+                class="form-control"
+                placeholder="Enter file path"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </form>
+          <hr />
+          <form id="downloadForm">
+            <div class="form-group">
+              <input
+                type="text"
+                id="downloadPath"
+                name="filePath"
+                class="form-control"
+                placeholder="Enter file path"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-success">Download</button>
+          </form>
+          <hr />
+          <form id="updateForm" enctype="multipart/form-data">
+            <div class="form-group">
+              <input
+                type="file"
+                id="updateFile"
+                name="file"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                id="updateFilePath"
+                class="form-control"
+                placeholder="Enter file path"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-secondary">Update</button>
+          </form>
+          <hr />
+          <form id="deleteForm">
+            <div class="form-group">
+              <input
+                type="text"
+                id="deletePath"
+                name="filePath"
+                class="form-control"
+                placeholder="Enter file path"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+    
+          <div id="message" class="message"></div>
+          <div id="loader" class="loader"></div>
+        </div>
+    
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+          $(document).ready(function () {
+            $(".message").addClass("fadeIn");
+    
+            $("\#uploadForm").submit(function (e) {
+              e.preventDefault();
+              $("\#loader").show();
+              var file = $("\#uploadFile")[0].files[0];
+              var filePath = $("\#uploadFilePath").val();
+              $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/file",
+                data: file,
+                headers: {
+                  "x-full-file-path": filePath,
+                },
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                  $("\#loader").hide();
+                  setMessage("File uploaded successfully", "success");
+                },
+                error: function (xhr, status, error) {
+                  $("\#loader").hide();
+                  setMessage("Error uploading file", "error");
+                },
+              });
+            });
+    
+            $("\#downloadForm").submit(function (e) {
+              e.preventDefault();
+              var filePath = $("\#downloadPath").val();
+              var xhr = new XMLHttpRequest();
+              xhr.open("GET", "http://localhost:8080/file", true);
+              xhr.setRequestHeader("x-full-file-path", filePath);
+              xhr.responseType = "arraybuffer";
+              xhr.onload = function () {
+                if (xhr.status === 200) {
+                  var blob = new Blob([xhr.response]);
+                  var url = window.URL.createObjectURL(blob);
+                  var a = document.createElement("a");
+                  a.href = url;
+                  a.download = filePath.substr(filePath.lastIndexOf("/") + 1);
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                } else {
+                  console.error("Error downloading file:", xhr.status);
+                }
+              };
+              xhr.send();
+            });
+    
+            $("\#updateForm").submit(function (e) {
+              e.preventDefault();
+              $("\#loader").show();
+              var file = $("\#updateFile")[0].files[0];
+              var filePath = $("\#updateFilePath").val();
+              formData.append("file", file);
+              $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/file",
+                headers: {
+                  "x-full-file-path": filePath,
+                },
+                data: file,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                  $("\#loader").hide();
+                  setMessage("File updated successfully", "success");
+                },
+                error: function (xhr, status, error) {
+                  $("\#loader").hide();
+                  setMessage("Error updating file", "error");
+                },
+              });
+            });
+    
+            $("\#deleteForm").submit(function (e) {
+              e.preventDefault();
+              $("\#loader").show();
+              var filePath = $("\#deletePath").val();
+              $.ajax({
+                type: "DELETE",
+                url: "http://localhost:8080/file",
+                headers: {
+                  "x-full-file-path": filePath,
+                },
+                success: function (response) {
+                  $("\#loader").hide();
+                  setMessage("File deleted successfully", "success");
+                },
+                error: function (xhr, status, error) {
+                  $("\#loader").hide();
+                  setMessage("Error deleting file", "error");
+                },
+              });
+            });
+    
+            function setMessage(message, type) {
+              var messageElement = $("\#message");
+              messageElement.text(message);
+              messageElement.addClass("message " + type);
+              messageElement.fadeIn().delay(3000).fadeOut();
+            }
+          });
+        </script>
+      </body>
+    </html>
+    "#;
+
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(html_content)
+}
