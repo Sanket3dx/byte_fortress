@@ -321,7 +321,7 @@ pub async fn index() -> HttpResponse {
               var filePath = $("\#uploadFilePath").val();
               $.ajax({
                 type: "POST",
-                url: "http://localhost:8080/file",
+                url: "/file",
                 data: file,
                 headers: {
                   "x-full-file-path": filePath,
@@ -343,7 +343,7 @@ pub async fn index() -> HttpResponse {
               e.preventDefault();
               var filePath = $("\#downloadPath").val();
               var xhr = new XMLHttpRequest();
-              xhr.open("GET", "http://localhost:8080/file", true);
+              xhr.open("GET", "/file", true);
               xhr.setRequestHeader("x-full-file-path", filePath);
               xhr.responseType = "arraybuffer";
               xhr.onload = function () {
@@ -371,7 +371,7 @@ pub async fn index() -> HttpResponse {
               formData.append("file", file);
               $.ajax({
                 type: "POST",
-                url: "http://localhost:8080/file",
+                url: "/file",
                 headers: {
                   "x-full-file-path": filePath,
                 },
@@ -395,7 +395,7 @@ pub async fn index() -> HttpResponse {
               var filePath = $("\#deletePath").val();
               $.ajax({
                 type: "DELETE",
-                url: "http://localhost:8080/file",
+                url: "/file",
                 headers: {
                   "x-full-file-path": filePath,
                 },
